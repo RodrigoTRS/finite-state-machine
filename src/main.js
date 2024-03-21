@@ -2,10 +2,12 @@ import { input, reader } from "./utils/reader.js";
 import { Automaton } from "./entities/Automaton.js"
 
 export async function main(mode) {
-    
-    const automaton = await Automaton.create(mode)
 
+    const automaton = await Automaton.create(mode)
     console.log(automaton)
+
+    // automaton.normalize()
+    // console.log(automaton)
  
     let output = []
 

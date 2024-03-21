@@ -11,7 +11,7 @@ export class Transition {
 
     static create(transitionString) {
         const transitionArray = transitionString.split("")
-        const newTransition = new Transition(Number(transitionArray[0]), transitionArray[2], Number(transitionArray[4]))
+        const newTransition = new Transition(transitionArray[0], transitionArray[2], transitionArray[4])
         return newTransition
     }
 }

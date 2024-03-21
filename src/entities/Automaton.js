@@ -49,12 +49,110 @@ export class Automaton {
             return true
         }
     }
+
+    // -----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------
+
+    // normalize() {
+    //     const initialState = {
+    //         state: this.states[0],
+    //         validated: false
+    //     }
+        
+    //     let states = [ initialState ]
+    //     let transitions = []
+        
+        
+    //     console.log("\n\n=== Before ===\n\n")
+    //     let loopcount = 1;
+    //     let isThereAnUnvalidatedState = true
+    //     while (isThereAnUnvalidatedState) { /// ----- Looping start
+    //         console.log(`\n\n ----------------- Loop: ${loopcount}`)
+    //         console.log("\n\nStates: \n\n",states)
+
+    //         isThereAnUnvalidatedState = states.find((state) => state.validated === false)
+
+    //         const currentState = isThereAnUnvalidatedState
+    //         let stateTransitions = []
+
+    //         if (String(currentState.state).length > 1) {
+    //             let stateSources = String(currentState.state).split("")
+    //             let intCoercedStateSources = stateSources.map((source) => { return Number(source) })
+    //             stateTransitions = this.transitions.filter((transition) => intCoercedStateSources.includes(transition.source))
+    //         } else {
+    //             stateTransitions = this.transitions.filter((transition) => transition.source === currentState.state)
+    //         }
+            
+    //         console.log(stateTransitions)
+    //         let nextStatesTransitionsArray = []
+            
+    //         this.tokens.map((token) => {
+    //             let nextStateByToken = stateTransitions.filter((transition) => {
+    //                 return transition.token === token
+    //             })
+    //             nextStatesTransitionsArray.push(nextStateByToken)
+    //         })
+            
+    //         console.log("\n\nNext state transitions array: \n", nextStatesTransitionsArray)
+
+                        
+    //         let nextStates = nextStatesTransitionsArray.map((transitionsAray) => {
+    //             let newStateArray = []
+    //             let source = transitionsAray[0].source
+    //             let token = transitionsAray[0].token
+    //             transitionsAray.map((transition) => {
+    //                 if (!newStateArray.includes(transition.destination)) {
+    //                     newStateArray.push(transition.destination)
+    //                 }
+    //             })
+    //             console.log(newStateArray)
+                
+    //             let newState = ""
+    //             newStateArray.map((number) => {
+    //                 newState = newState + String(number)
+    //             })
+
+    //             console.log(newState)
+
+    //             transitions.push(new Transition(source, token, Number(newState)))
+    //             return Number(newState)
+    //         })
+            
+    //         isThereAnUnvalidatedState.validated = true
+    //         nextStates.map((newState) => {
+    //             const statesArray = states.map((state) => {
+    //                 return state.state
+    //             })
+    //             if (!statesArray.includes(newState)) {
+    //                 states.push({
+    //                     state: newState,
+    //                     validated: false
+    //                 })
+    //             }
+    //         })
+    //         loopcount++
+    //     } // -------------------------- Looping end
+
+
+    //     console.log("\n\n=== After ===\n\n")
+    //     // states = states.map((state) => { return state.state })
+
+    //     console.log(states)
+    //     console.log(transitions)
+
+
+    // }
+    // // -----------------------------------------------------------------------------------------------
+    // // -----------------------------------------------------------------------------------------------
+    // // -----------------------------------------------------------------------------------------------
+
     
     generateStateArray(states) {
         let statesArray = []
         
         for (let i = 0; i<states; i++) {
-            statesArray.push(i)
+            statesArray.push(String(i))
         }
         
         return statesArray
@@ -65,12 +163,8 @@ export class Automaton {
     }
     
     generateAcceptaceStatesArray(acceptanceStates) {
-        let numberArray = []
         const stringArray = acceptanceStates.split(" ").splice(1)
-        stringArray.map((item) => {
-            numberArray.push(Number(item))
-        })
-        return numberArray
+        return stringArray
     }
     
     generateTransitionsArray(transitions) {
@@ -83,6 +177,7 @@ export class Automaton {
     
     execute(entrance) {
         let currentState = this.states[0]
+
         
         for (let i = 0; i < entrance.length; i++) {
             currentState = this.process(currentState, entrance[i])
