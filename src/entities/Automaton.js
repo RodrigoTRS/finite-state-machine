@@ -50,103 +50,105 @@ export class Automaton {
         }
     }
 
-    // -----------------------------------------------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------
-
-    // normalize() {
-    //     const initialState = {
-    //         state: this.states[0],
-    //         validated: false
-    //     }
+    normalize() {
+        const initialState = {
+            state: this.states[0],
+            validated: false
+        }
         
-    //     let states = [ initialState ]
-    //     let transitions = []
+        let states = [ initialState ]
+        let transitions = []
         
         
-    //     console.log("\n\n=== Before ===\n\n")
-    //     let loopcount = 1;
-    //     let isThereAnUnvalidatedState = true
-    //     while (isThereAnUnvalidatedState) { /// ----- Looping start
-    //         console.log(`\n\n ----------------- Loop: ${loopcount}`)
-    //         console.log("\n\nStates: \n\n",states)
+        let isThereAnUnvalidatedState = true
+        while (isThereAnUnvalidatedState) {
 
-    //         isThereAnUnvalidatedState = states.find((state) => state.validated === false)
 
-    //         const currentState = isThereAnUnvalidatedState
-    //         let stateTransitions = []
+            isThereAnUnvalidatedState = states.find((state) => state.validated === false)
+            if (!isThereAnUnvalidatedState) {
+                break
+            }
 
-    //         if (String(currentState.state).length > 1) {
-    //             let stateSources = String(currentState.state).split("")
-    //             let intCoercedStateSources = stateSources.map((source) => { return Number(source) })
-    //             stateTransitions = this.transitions.filter((transition) => intCoercedStateSources.includes(transition.source))
-    //         } else {
-    //             stateTransitions = this.transitions.filter((transition) => transition.source === currentState.state)
-    //         }
+            const currentState = isThereAnUnvalidatedState
             
-    //         console.log(stateTransitions)
-    //         let nextStatesTransitionsArray = []
+            let stateTransitions = []
+            if (currentState.state.length > 1) {
+                let stateSources = currentState.state.split("")
+                stateTransitions = this.transitions.filter((transition) => stateSources.includes(transition.source))
+            } else {
+                stateTransitions = this.transitions.filter((transition) => transition.source === currentState.state)
+            }
             
-    //         this.tokens.map((token) => {
-    //             let nextStateByToken = stateTransitions.filter((transition) => {
-    //                 return transition.token === token
-    //             })
-    //             nextStatesTransitionsArray.push(nextStateByToken)
-    //         })
             
-    //         console.log("\n\nNext state transitions array: \n", nextStatesTransitionsArray)
-
-                        
-    //         let nextStates = nextStatesTransitionsArray.map((transitionsAray) => {
-    //             let newStateArray = []
-    //             let source = transitionsAray[0].source
-    //             let token = transitionsAray[0].token
-    //             transitionsAray.map((transition) => {
-    //                 if (!newStateArray.includes(transition.destination)) {
-    //                     newStateArray.push(transition.destination)
-    //                 }
-    //             })
-    //             console.log(newStateArray)
-                
-    //             let newState = ""
-    //             newStateArray.map((number) => {
-    //                 newState = newState + String(number)
-    //             })
-
-    //             console.log(newState)
-
-    //             transitions.push(new Transition(source, token, Number(newState)))
-    //             return Number(newState)
-    //         })
+            let nextStatesTransitionsArray = []
+            this.tokens.map((token) => {
+                let nextStateByToken = stateTransitions.filter((transition) => {
+                    return transition.token === token
+                })
+                nextStatesTransitionsArray.push(nextStateByToken)
+            })
             
-    //         isThereAnUnvalidatedState.validated = true
-    //         nextStates.map((newState) => {
-    //             const statesArray = states.map((state) => {
-    //                 return state.state
-    //             })
-    //             if (!statesArray.includes(newState)) {
-    //                 states.push({
-    //                     state: newState,
-    //                     validated: false
-    //                 })
-    //             }
-    //         })
-    //         loopcount++
-    //     } // -------------------------- Looping end
+            let newSource = []
+            let nextStates = nextStatesTransitionsArray.map((transitionsAray) => {
+                let newState = []
+                transitionsAray.map((transition) => {
+                    if (!newState.includes(transition.destination)) {
+                        newState.push(transition.destination)
+                    }
+                })
 
+                transitionsAray.map((transition) => {
+                    if (!newSource.includes(transition.source)) {
+                        newSource.push(transition.source)
+                    }
+                })
 
-    //     console.log("\n\n=== After ===\n\n")
-    //     // states = states.map((state) => { return state.state })
+                let token = transitionsAray[0].token
 
-    //     console.log(states)
-    //     console.log(transitions)
+                let concatenatedNewState = ""
+                newState.map((char) => {
+                    concatenatedNewState = concatenatedNewState + char
+                })
 
+                let concatenatedNewSource = ""
+                newSource.map((char) => {
+                    concatenatedNewSource = concatenatedNewSource + char
+                })
 
-    // }
-    // // -----------------------------------------------------------------------------------------------
-    // // -----------------------------------------------------------------------------------------------
-    // // -----------------------------------------------------------------------------------------------
+                transitions.push(new Transition(concatenatedNewSource, token, concatenatedNewState))
+                return concatenatedNewState
+            })
+            
+            isThereAnUnvalidatedState.validated = true
+            nextStates.map((newState) => {
+                const statesArray = states.map((state) => {
+                    return state.state
+                })
+                if (!statesArray.includes(newState)) {
+                    states.push({
+                        state: newState,
+                        validated: false
+                    })
+                }
+            })
+        } 
 
+        let acceptanceStates = []
+        transitions.map((transition) => {
+            if (this.acceptanceStates.includes(transition.destination)) {
+                if (!acceptanceStates.includes(transition.source)) {
+                    acceptanceStates.push(transition.source)
+                }
+            }
+        })
+
+        states = states.map((state) => { return state.state })
+
+        this.states = states
+        this.acceptanceStates = acceptanceStates
+        this.transitions = transitions
+        this.type="AFD"
+    }
     
     generateStateArray(states) {
         let statesArray = []

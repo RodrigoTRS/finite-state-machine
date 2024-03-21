@@ -4,10 +4,9 @@ import { Automaton } from "./entities/Automaton.js"
 export async function main(mode) {
 
     const automaton = await Automaton.create(mode)
-    console.log(automaton)
-
-    // automaton.normalize()
-    // console.log(automaton)
+    console.log("\n\nAutomaton: \n", automaton)
+    if (automaton.type === "AFN") automaton.normalize()
+    console.log("\n\nAutomaton: \n", automaton)
  
     let output = []
 
