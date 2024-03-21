@@ -67,26 +67,27 @@ export class Automaton {
                 break
             }
             
-            let stateTransitions = []
+            let currentStateTransitions = []
             if (currentState.state.length > 1) {
                 let stateSources = currentState.state.split("")
-                stateTransitions = this.transitions.filter((transition) => stateSources.includes(transition.source))
+                currentStateTransitions = this.transitions.filter((transition) => stateSources.includes(transition.source))
             } else {
-                stateTransitions = this.transitions.filter((transition) => transition.source === currentState.state)
+                currentStateTransitions = this.transitions.filter((transition) => transition.source === currentState.state)
             }
             
             
-            let nextStatesTransitionsArray = []
+            let tokenSeparatedStateTransitions = []
             this.tokens.map((token) => {
-                let nextStateByToken = stateTransitions.filter((transition) => {
+                let transition = currentStateTransitions.filter((transition) => {
                     return transition.token === token
                 })
-                nextStatesTransitionsArray.push(nextStateByToken)
+                tokenSeparatedStateTransitions.push(transition)
             })
             
             let newSource = []
-            let nextStates = nextStatesTransitionsArray.map((transitionsAray) => {
-                let newState = []
+            let newState = []
+
+            let newStates = tokenSeparatedStateTransitions.map((transitionsAray) => {
                 transitionsAray.map((transition) => {
                     if (!newState.includes(transition.destination)) {
                         newState.push(transition.destination)
@@ -116,10 +117,12 @@ export class Automaton {
             })
             
             currentState.validated = true
-            nextStates.map((newState) => {
+            newStates.map((newState) => {
+                
                 const statesArray = states.map((state) => {
                     return state.state
                 })
+
                 if (!statesArray.includes(newState)) {
                     states.push({
                         state: newState,
