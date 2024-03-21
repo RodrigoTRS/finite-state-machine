@@ -56,20 +56,16 @@ export class Automaton {
             validated: false
         }
         
-        let states = [ initialState ]
+        let states = [initialState]
         let transitions = []
+        let acceptanceStates = []
         
-        
-        let isThereAnUnvalidatedState = true
-        while (isThereAnUnvalidatedState) {
+        while (true) {
 
-
-            isThereAnUnvalidatedState = states.find((state) => state.validated === false)
-            if (!isThereAnUnvalidatedState) {
+            let currentState = states.find((state) => state.validated === false)
+            if (!currentState) {
                 break
             }
-
-            const currentState = isThereAnUnvalidatedState
             
             let stateTransitions = []
             if (currentState.state.length > 1) {
@@ -119,7 +115,7 @@ export class Automaton {
                 return concatenatedNewState
             })
             
-            isThereAnUnvalidatedState.validated = true
+            currentState.validated = true
             nextStates.map((newState) => {
                 const statesArray = states.map((state) => {
                     return state.state
@@ -133,7 +129,6 @@ export class Automaton {
             })
         } 
 
-        let acceptanceStates = []
         transitions.map((transition) => {
             if (this.acceptanceStates.includes(transition.destination)) {
                 if (!acceptanceStates.includes(transition.source)) {
