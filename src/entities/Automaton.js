@@ -10,7 +10,8 @@ export class Automaton {
     transitions
     type
     
-    constructor({ states, tokens, acceptanceStates, transitions }) {
+    constructor({ mode, states, tokens, acceptanceStates, transitions }) {
+        this.mode = mode === "mocked" ? "mocked" : "input"
         this.states = this.generateStateArray(states)
         this.tokens = this.generateTokensArray(tokens)
         this.acceptanceStates = this.generateAcceptaceStatesArray(acceptanceStates)
@@ -19,13 +20,12 @@ export class Automaton {
     }
 
     static async create(mode) {
-        this.mode = mode
-        if(this.mode === "mocked") { // Se o mode da aplicação estiver em "mocked", recebe os dados de mocked-data.js
+        if(mode === "mocked") { // Se o mode da aplicação estiver em "mocked", recebe os dados de mocked-data.js
             const { states, tokens, acceptanceStates, transitions } = mockedData
-            return new Automaton({ states, tokens, acceptanceStates, transitions })
+            return new Automaton({ mode, states, tokens, acceptanceStates, transitions })
         } else { // Se não, recebe os dados de receive-input.js
             const { states, tokens, acceptanceStates, transitions } = await receiveInput()
-            return new Automaton({ states, tokens, acceptanceStates, transitions })
+            return new Automaton({ mode, states, tokens, acceptanceStates, transitions })
         }
     }
 

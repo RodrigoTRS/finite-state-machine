@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "start:mocked": "node src/app.js --mocked"
   },
   "type": "module",
   "keywords": [],
