@@ -1,0 +1,15 @@
+{
+  "name": "trabalho-itc",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node src/main.js"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node": "^21.7.1"
+  }
+}
