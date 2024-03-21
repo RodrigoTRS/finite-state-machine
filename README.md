@@ -1,4 +1,4 @@
-## Compotational Theory Introduction
+## Introduction to the Theory of Computation
 #### Finite State Machine
 
 #### Group
