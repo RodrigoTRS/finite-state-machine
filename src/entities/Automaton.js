@@ -1,29 +1,94 @@
 import { Transition } from "./Transition.js"
+import { mockedData } from "../test/mocked-data.js";
+import { receiveInput } from "../test/receive-input.js";
 
 export class Automaton {
+    mode
     states
     tokens
-    acceptance_states
-    transitions = []
+    acceptanceStates
+    transitions
+    type
     
-
-    constructor({ states, tokens, acceptance_states }) {
+    constructor({ states, tokens, acceptanceStates, transitions }) {
         this.states = this.generateStateArray(states)
         this.tokens = this.generateTokensArray(tokens)
-        this.acceptance_states = this.generateAcceptaceStatesArray(acceptance_states)
+        this.acceptanceStates = this.generateAcceptaceStatesArray(acceptanceStates)
+        this.transitions = this.generateTransitionsArray(transitions)
+        this.type = this.isDeterministic() ? "AFD" : "AFN"
     }
 
+    static async create(mode) {
+        this.mode = mode
+        if(this.mode === "mocked") { // Se o mode da aplicação estiver em "mocked", recebe os dados de mocked-data.js
+            const { states, tokens, acceptanceStates, transitions } = mockedData
+            return new Automaton({ states, tokens, acceptanceStates, transitions })
+        } else { // Se não, recebe os dados de receive-input.js
+            const { states, tokens, acceptanceStates, transitions } = await receiveInput()
+            return new Automaton({ states, tokens, acceptanceStates, transitions })
+        }
+    }
+
+    
+    isDeterministic() {
+        let transitionsValidator = []
+        
+        const isValidTransitionArray = this.transitions.map((transition) => {
+            let sourceAndToken = String(transition.source) + transition.token
+            if (transitionsValidator.includes(sourceAndToken)) {
+                return false
+            } else {
+                transitionsValidator.push(sourceAndToken)
+                return true
+            }
+        })
+        
+        if (isValidTransitionArray.includes(false)) {
+            return false
+        } else {
+            return true
+        }
+    }
+    
+    generateStateArray(states) {
+        let statesArray = []
+        
+        for (let i = 0; i<states; i++) {
+            statesArray.push(i)
+        }
+        
+        return statesArray
+    }
+    
+    generateTokensArray(tokens) {
+        return tokens.split(" ").splice(1)
+    }
+    
+    generateAcceptaceStatesArray(acceptanceStates) {
+        let numberArray = []
+        const stringArray = acceptanceStates.split(" ").splice(1)
+        stringArray.map((item) => {
+            numberArray.push(Number(item))
+        })
+        return numberArray
+    }
+    
+    generateTransitionsArray(transitions) {
+        let transitionsArray = []
+        transitions.map((transition) => {
+            transitionsArray.push(Transition.create(transition))
+        })
+        return transitionsArray
+    }
+    
     execute(entrance) {
         let currentState = this.states[0]
-        console.log(currentState)
-
-
+        
         for (let i = 0; i < entrance.length; i++) {
             currentState = this.process(currentState, entrance[i])
-            console.log(currentState)
         }
-
-        if (this.acceptance_states.includes(currentState)) {
+        
+        if (this.acceptanceStates.includes(currentState)) {
             return true
         } else {
             return false
@@ -35,49 +100,21 @@ export class Automaton {
         if (token === "-") {
             return state
         }
-
+        
         const transitionsFromThisState = this.transitions.filter((transitions) => {
             return transitions.source === state
         })
-
+        
         // Not accepted if no transitions from current state
         if (!transitionsFromThisState) return -1
         
         const transitionsThatProcessCurrentToken = transitionsFromThisState.filter((transitions) => {
             return transitions.token === token
         })
-
+        
         // Not accepted if token cant be processed from current state
         if (!transitionsThatProcessCurrentToken) return -1 
-
+        
         return transitionsThatProcessCurrentToken[0].destination
     } 
-
-    generateStateArray(states) {
-        let statesArray = []
-
-        for (let i = 0; i<states; i++) {
-            statesArray.push(i)
-        }
-
-        return statesArray
-    }
-
-    generateTokensArray(tokens) {
-        return tokens.split(" ").splice(1)
-    }
-
-    generateAcceptaceStatesArray(acceptance_states) {
-        let numberArray = []
-        const stringArray = acceptance_states.split(" ").splice(1)
-        stringArray.map((item) => {
-            numberArray.push(Number(item))
-        })
-        return numberArray
-    }
-
-    addTransition(transition) {
-        let newTransition = new Transition(Number(transition[0]), transition[2], Number(transition[4]))
-        this.transitions.push(newTransition)
-    }
 }
