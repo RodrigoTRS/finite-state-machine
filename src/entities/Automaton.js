@@ -58,7 +58,6 @@ export class Automaton {
         
         let states = [initialState]
         let transitions = []
-        let acceptanceStates = []
         
         while (true) {
 
@@ -67,27 +66,26 @@ export class Automaton {
                 break
             }
             
-            let currentStateTransitions = []
+            let stateTransitions = []
             if (currentState.state.length > 1) {
                 let stateSources = currentState.state.split("")
-                currentStateTransitions = this.transitions.filter((transition) => stateSources.includes(transition.source))
+                stateTransitions = this.transitions.filter((transition) => stateSources.includes(transition.source))
             } else {
-                currentStateTransitions = this.transitions.filter((transition) => transition.source === currentState.state)
+                stateTransitions = this.transitions.filter((transition) => transition.source === currentState.state)
             }
             
             
-            let tokenSeparatedStateTransitions = []
+            let nextStatesTransitionsArray = []
             this.tokens.map((token) => {
-                let transition = currentStateTransitions.filter((transition) => {
+                let nextStateByToken = stateTransitions.filter((transition) => {
                     return transition.token === token
                 })
-                tokenSeparatedStateTransitions.push(transition)
+                nextStatesTransitionsArray.push(nextStateByToken)
             })
             
-            let newSource = []
-            let newState = []
-
-            let newStates = tokenSeparatedStateTransitions.map((transitionsAray) => {
+            let nextStates = nextStatesTransitionsArray.map((transitionsAray) => {
+                let newState = []
+                let newSource = []
                 transitionsAray.map((transition) => {
                     if (!newState.includes(transition.destination)) {
                         newState.push(transition.destination)
@@ -117,12 +115,10 @@ export class Automaton {
             })
             
             currentState.validated = true
-            newStates.map((newState) => {
-                
+            nextStates.map((newState) => {
                 const statesArray = states.map((state) => {
                     return state.state
                 })
-
                 if (!statesArray.includes(newState)) {
                     states.push({
                         state: newState,
@@ -132,6 +128,7 @@ export class Automaton {
             })
         } 
 
+        let acceptanceStates = []
         transitions.map((transition) => {
             if (this.acceptanceStates.includes(transition.destination)) {
                 if (!acceptanceStates.includes(transition.source)) {
