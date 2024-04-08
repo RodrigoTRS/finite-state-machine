@@ -27,7 +27,7 @@ npm run start:mocked # FOR MOCKED DATA (defined in ./src/test/mocked-data.js)
 
 1. Você deve ter o <a href="https://nodejs.org/en/download>">node</a> instalado em seu computador.
 2. Baixe o .zip e abra um terminal no diretório.
-3. Instale as depedências digitando:
+3. Instale as dependências digitando:
 
 ```bash
 npm i
