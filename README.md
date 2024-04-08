@@ -12,7 +12,7 @@
 
 1. You must have <a href="https://nodejs.org/en/download>">node</a> installed on your computer.
 2. Download the .zip file and open a terminal in it's folder.
-3. Intall de dependencies running on terminal:
+3. Install de dependencies running on terminal:
 
 ```bash
 npm i
